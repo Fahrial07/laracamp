@@ -11,11 +11,16 @@ class HomeController extends Controller
 {
     public function dashboard()
     {
-        $checkouts = Checkout::with('Camp')->whereUserId(Auth::user()->id)->get();
-        //$checkouts = Checkout::with('Camps')->where('user_id', Auth::user()->id)->get();
-        $data = array(
-            'checkouts' => $checkouts
-        );
-        return view('user.dashboard', $data);
+        switch (Auth::user()->is_admin) {
+            case true:
+                return
+                    redirect(route('admin.dashboard'));
+                break;
+
+            default:
+                return
+                    redirect(route('user.dashboard'));
+                break;
+        }
     }
 }

@@ -7,9 +7,11 @@ use App\Models\Checkout;
 use Illuminate\Http\Request;
 use App\Http\Requests\User\Checkout\Store;
 use App\Models\Camps;
+use App\Mail\Checkout\AfterCheckout;
 use Auth;
 use Mail;
-use App\Mail\Checkout\AfterCheckout;
+use Str;
+use Midtrans;
 
 class CheckoutController extends Controller
 {
@@ -18,6 +20,14 @@ class CheckoutController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        Midtrans\Config::$serverKey = env('MIDTRANS_SERVERKEY');
+        Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION');
+        Midtrans\Config::$isSanitized = env('MIDTRANS_IS_SANITIZED');
+        Midtrans\Config::$is3ds = env('MIDTRANS_IS_3DS');
+    }
     public function index()
     {
         //
@@ -65,6 +75,7 @@ class CheckoutController extends Controller
 
         ///create checkout
         $checkout = Checkout::create($data);
+        $this->getSnapRedirect($checkout);
 
         //sending email
         Mail::to(Auth::user()->email)->send(new AfterCheckout($checkout));
@@ -121,5 +132,62 @@ class CheckoutController extends Controller
     public function success()
     {
         return view('checkout.success');
+    }
+
+    //midtrans handler
+    public function getSnapRedirect(Checkout $checkout)
+    {
+        $orderId = $checkout->id . '-' . Str::random(5);
+        $price = $checkout->camp->price * 1000;
+
+        $checkout->midtrans_booking_code = $orderId;
+
+        $transaction_details = [
+            'order_id'  =>   $orderId,
+            'gross_amount'  => $price
+        ];
+
+        $item_details = [
+            'id'    => $orderId,
+            'price' => $price,
+            'quantity'  => 1,
+            'name'  => "Payment for {$checkout->camp->title} Camp"
+        ];
+
+        $userData  = [
+            'first_name'    => $checkout->User->name,
+            'last_name'     => '',
+            'address'       => $checkout->User->address,
+            'city'          => '',
+            'postal_code'   =>  '',
+            'phone'         => $checkout->User->phone,
+            'country_code'  => 'IDN'
+        ];
+
+        $customer_details = [
+            'first_name'        =>  $checkout->User->email,
+            'last_name'         =>  '',
+            'email'             =>  $checkout->User->email,
+            'phone'             =>  $checkout->User->phone,
+            'billing_address'   =>  $userData,
+            'shipping_address'  =>  $userData
+        ];
+
+        $midtrans_params = [
+            'transaction_details' => $transaction_details,
+            'customer_details'    => $customer_details,
+            'item_details'        => $item_details
+        ];
+
+        try {
+            //Get Payment Page Url
+            $paymentUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
+            $checkout->midtrans_url = $paymentUrl;
+            $checkout->save();
+
+            return  $paymentUrl;
+        } catch (Exception $e) {
+            # code...
+        }
     }
 }

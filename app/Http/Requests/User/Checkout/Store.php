@@ -29,9 +29,8 @@ class Store extends FormRequest
             'name'  => 'required|String',
             'email' => 'required|email|unique:users,email,' . Auth::id() . ',id',
             'occupation'    => 'required|String',
-            'card_number'   => 'required|numeric|digits_between:8,16',
-            'expired'   => 'required|date|date_format:Y-m|after_or_equal:' . $expiredValidation,
-            'cvc'   => 'required|numeric|digits:3'
+            'phone'    => 'required|String',
+            'address'    => 'required|String',
         ];
     }
 }

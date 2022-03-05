@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
-    @section('content')
-        
-       <section class="dashboard my-5">
+@section('content')
+    <section class="dashboard my-5">
         <div class="container">
             <div class="row text-left">
                 <div class=" col-lg-12 col-12 header-wrap mt-4">
@@ -36,14 +35,16 @@
                                     <strong>${{ $checkout->Camp->price }}K</strong>
                                 </td>
                                 <td>
-                                    @if ($checkout->is_paid)
-                                        <strong class="text-success">Payment Success</strong>
-                                    @else
-                                        <strong>Waiting for Payment</strong>
+                                    <strong>${{ $checkout->payment_status }}K</strong>
+                                </td>
+                                <td>
+                                    @if ($checkout->payment_status == 'waiting')
+                                        <a href="{{ $checkout->midtrasn_url }}" class="btn btn-primary">Pay Here</a>
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="https://wa.me/62xxxxxxxxxxx?text=Hi, Saya ingin bertanya tentang kelas {{ $checkout->Camp->title  }}" class="btn btn-primary">
+                                    <a href="https://wa.me/62xxxxxxxxxxx?text=Hi, Saya ingin bertanya tentang kelas {{ $checkout->Camp->title }}"
+                                        class="btn btn-primary">
                                         Contact Support
                                     </a>
                                 </td>
@@ -51,7 +52,7 @@
                         @empty
                             <tr>
                                 <td colspan="5">
-                                    <h3>No Data</h3>
+                                    <h3>No Camp Registered</h3>
                                 </td>
                             </tr>
                         @endforelse
@@ -60,5 +61,4 @@
             </div>
         </div>
     </section>
-
-    @endsection
+@endsection

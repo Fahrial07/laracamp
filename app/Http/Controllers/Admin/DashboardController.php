@@ -11,7 +11,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $checkouts = Checkout::with('Camp')->get();
+        $checkouts = Checkout::with('Camp')->get()->sortByDesc('id');
         return view('admin.dashboard', [
             'checkouts' => $checkouts
         ]);

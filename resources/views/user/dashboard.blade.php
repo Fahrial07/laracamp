@@ -25,21 +25,29 @@
                                 </td>
                                 <td>
                                     <p class="mb-2">
-                                        <strong>{{ $checkout->Camp->title }}</strong>
+                                        <strong>
+                                            {{ $checkout->Camp->title }}
+                                        </strong>
                                     </p>
                                     <p>
                                         {{ $checkout->created_at->format('M d, Y') }}
                                     </p>
                                 </td>
                                 <td>
-                                    <strong>${{ $checkout->Camp->price }}K</strong>
+                                    <strong>
+                                        Rp. {{ $checkout->total }}
+                                        @if ($checkout->discount_id)
+                                            <span class="badge bg-success">Disc
+                                                {{ $checkout->discount_percentage }}%</span>
+                                        @endif
+                                    </strong>
                                 </td>
                                 <td>
-                                    <strong>${{ $checkout->payment_status }}K</strong>
+                                    <strong>{{ $checkout->payment_status }}</strong>
                                 </td>
                                 <td>
                                     @if ($checkout->payment_status == 'waiting')
-                                        <a href="{{ $checkout->midtrasn_url }}" class="btn btn-primary">Pay Here</a>
+                                        <a href="{{ $checkout->midtrans_url }}" class="btn btn-primary">Pay Here</a>
                                     @endif
                                 </td>
                                 <td>

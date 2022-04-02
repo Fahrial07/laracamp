@@ -57,7 +57,7 @@
                     <a href="{{ route('login') }}" class="btn btn-master btn-secondary me-3">
                         Sign In
                     </a>
-                    <a href="{{ route('login') }}" class="btn btn-master btn-primary">
+                    <a href="{{ route('register.user') }}" class="btn btn-master btn-primary">
                         Sign Up
                     </a>
                 </div>

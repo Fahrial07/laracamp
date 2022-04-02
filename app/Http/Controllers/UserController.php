@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
@@ -12,6 +11,8 @@ use App\Mail\User\AfterRegister;
 
 class UserController extends Controller
 {
+
+
     public function login()
     {
         return view('auth.user.login');

@@ -16,7 +16,10 @@ class Checkout extends Model
         'camp_id',
         'payment_status',
         'midtrans_url',
-        'midtrans_booking_code'
+        'midtrans_booking_code',
+        'discount_id',
+        'discount_percentage',
+        'total'
     ];
 
 
@@ -43,5 +46,15 @@ class Checkout extends Model
     public function User(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the Discount that owns the Checkout
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function Discount(): BelongsTo
+    {
+        return $this->belongsTo(Discount::class);
     }
 }
